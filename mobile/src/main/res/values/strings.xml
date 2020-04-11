@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TimeTracker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="message_success">Message send successfully</string>
+    <string name="previous"><![CDATA[<-previous]]></string>
+    <string name="next"><![CDATA[Next->]]></string>
+</resources>
