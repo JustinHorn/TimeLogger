@@ -7,15 +7,12 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
+
 import com.google.android.gms.wearable.DataMap
-import com.google.android.gms.wearable.Wearable
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedWriter
 import java.io.File
@@ -25,10 +22,8 @@ import java.time.Duration
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() ,    GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var googleClient:GoogleApiClient
 
     private  val REQ_CODE = 100
     private var check = true
@@ -36,7 +31,8 @@ class MainActivity : AppCompatActivity() ,    GoogleApiClient.ConnectionCallback
 
     companion object {
         const val DATA_PATH_SEND = "/wearable_data"
-        const val DATA_PATH_RECEIVED = "/wearable_send"
+        const val DATA_MESSAGE = "message"
+        var count = 0
         lateinit var FILE_PATH:File
         val day_format = SimpleDateFormat("E dd.MM.yyyy")
         val entry_format = SimpleDateFormat("HH:mm")
@@ -45,13 +41,15 @@ class MainActivity : AppCompatActivity() ,    GoogleApiClient.ConnectionCallback
         fun appendEntry(time: Long, message: String) {
             et_entries.text.append("\n" + Entry(time, message))
         }
+        fun appendLine(line:String) {
+            et_entries.append(line)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        googleClient = GoogleApiClient.Builder(this).addApi(Wearable.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build()
         FILE_PATH = applicationContext.externalCacheDir
         tv_day.text = day
         initEtEntries();
@@ -122,30 +120,6 @@ class MainActivity : AppCompatActivity() ,    GoogleApiClient.ConnectionCallback
 
     override fun onStart() {
         super.onStart()
-        googleClient.connect()
-    }
-
-    override fun onConnected(p0: Bundle?) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onStop() {
-        if (googleClient.isConnected) {
-            googleClient.disconnect()
-        }
-        super.onStop()
-    }
-
-    override fun onConnectionSuspended(cause: Int) {}
-
-    override fun onConnectionFailed(connectionResult: ConnectionResult) {}
-
-    fun sayHelloWorld(view: View) {
-        val dataMap = DataMap()
-        dataMap.putLong("time", Date().time)
-        dataMap.putString("hole", "1")
-
-        SendToDataLayerThread(DATA_PATH_SEND, dataMap,baseContext).start();
     }
 
     fun speak(view: View) {
