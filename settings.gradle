@@ -1,0 +1,3 @@
+include ':mobile_timelogger'
+rootProject.name='TimeLogger'
+include ':watch_timelogger'
