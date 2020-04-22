@@ -2,6 +2,7 @@ package com.watch.timelogger
 
 import android.util.Log
 import com.google.android.gms.wearable.*
+import com.watch.project.Constants
 
 
 class ListenerService : WearableListenerService() {
@@ -14,15 +15,15 @@ class ListenerService : WearableListenerService() {
                 val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
                 Log.v("recieveData","dataMap recieved $dataMap")
                 addContentToText(dataMap)
-                putUsedCountAsDatItem(dataMap.getInt("number"))
+                putUsedCountAsDatItem(dataMap.getInt(Constants.number_key))
             }
         }
     }
     fun addContentToText(dataMap:DataMap) {
-        var count = dataMap.getInt("number")
+        var count = dataMap.getInt(Constants.number_key)
         var text = ""
             for (i in 0..count) {
-                text += dataMap.getString("message" + i)
+                text += dataMap.getString(Constants.message_key+ i)
             }
         MainActivity.FILE_PATH = applicationContext.externalCacheDir
         text = MainActivity.removeRepetitions(text)
@@ -31,8 +32,8 @@ class ListenerService : WearableListenerService() {
 
     private fun putUsedCountAsDatItem(number:Int) {
         var dataMap:DataMap = DataMap()
-        dataMap.putInt("number",number)
-        SendToDataLayerThread(MainActivity.DATA_PATH_SEND,dataMap,baseContext).start()
+        dataMap.putInt(Constants.number_key,number)
+        SendToDataLayerThread(dataMap,baseContext).start()
     }
 
 }

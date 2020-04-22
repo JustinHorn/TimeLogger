@@ -3,6 +3,7 @@ package com.watch.timelogger
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.wearable.*
+import com.watch.project.Constants
 
 
 class ListenerService : WearableListenerService() {
@@ -24,10 +25,7 @@ class ListenerService : WearableListenerService() {
                         val dataClient: DataClient = Wearable.getDataClient(baseContext)
                         dataMap = DataMap()
                         dataMap.putInt("number",-1)
-                        val pDMR:PutDataMapRequest = PutDataMapRequest.create(MainActivity.DATA_PATH_SEND)
-                        pDMR.dataMap.putAll(dataMap)
-                        val request = pDMR.asPutDataRequest()
-                        dataClient.putDataItem(request)
+                        SendToDataLayerThread.putMapOnDataLayer(dataClient,dataMap)
                     }
 
                     Log.v("dataListener", "DataMap received on watch: $dataMap")

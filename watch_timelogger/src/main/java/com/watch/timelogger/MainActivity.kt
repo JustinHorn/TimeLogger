@@ -20,11 +20,6 @@ class MainActivity : WearableActivity() {
     private lateinit var messageClient: MessageClient
 
     companion object {
-        const val DATA_PATH_SEND = "/wearable_timetracker_data"
-        const val DATA_PATH_RECEIVE = "/mobile_timetracker_data"
-        const val DATA_TIME = "time"
-        const val DATA_MESSAGE = "message"
-        const val RECEIVED ="RECEIVED"
         const val LOG_TAG = "MainActivity"
         var AUDIO_PERMISSION = false
     }
@@ -36,7 +31,6 @@ class MainActivity : WearableActivity() {
         speechRecognition = SpeechRecognition(progressBar, btn_speak, tv_speech,tv_recognitionState, baseContext)
         btn_speak_setOnChangedListener()
         setAutoResumeEnabled(false)
-        baseContext.resources.getString(R.string.hello_world)
     }
 
     fun btn_speak_setOnChangedListener() {

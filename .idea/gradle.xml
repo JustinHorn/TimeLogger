@@ -11,6 +11,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/helper" />
             <option value="$PROJECT_DIR$/mobile_timelogger" />
             <option value="$PROJECT_DIR$/watch_timelogger" />
           </set>

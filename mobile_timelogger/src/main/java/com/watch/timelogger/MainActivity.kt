@@ -28,18 +28,13 @@ class MainActivity : AppCompatActivity() {
     private var time:Long= 0L
 
     companion object {
-        const val DATA_PATH_SEND = "/mobile_timetracker_data"
-        const val DATA_MESSAGE = "message"
         lateinit var FILE_PATH:File
         val day_format = SimpleDateFormat("E dd.MM.yyyy")
         val entry_format = SimpleDateFormat("HH:mm")
-        var day = day_format.format(Date().time)
+        var applicationDay = day_format.format(Date().time)
         lateinit var et_entries:EditText //basicly et_speech
-        fun appendEntry(time: Long, message: String) {
-            et_entries.text.append("\n" + Entry(time, message))
-        }
         fun appendLine(text:String) {
-            if(this::et_entries.isInitialized) {
+            if(this::et_entries.isInitialized && applicationDay == day_format.format(Date().time)) {
                 et_entries.append(text)
             } else {
                 appendToFile(text)
@@ -47,11 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         private fun appendToFile(text:String) {
-            if (day == day_format.format(Date().time)) {
-                writeOrAppendToFile(text, day, true)
-            } else {
-                throw Exception("'day' not today! day: $day and today: ${day_format.format(Date().time)}")
-            }
+            writeOrAppendToFile(text, day_format.format(Date().time), true)
         }
 
         fun writeToFile(text:String,file:String) {
@@ -82,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         FILE_PATH = applicationContext.externalCacheDir
-        tv_day.text = day
+        tv_day.text = applicationDay
         initEtEntries();
     }
 
@@ -92,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             override fun afterTextChanged(p0: Editable?) {
                 var text = removeRepetitions(et_entries.text.toString())
                 if (text == et_entries.text.toString()) {
-                    writeToFile(et_entries.text.toString(), day)
+                    writeToFile(et_entries.text.toString(), applicationDay)
                 } else {
                     et_entries.text = SpannableStringBuilder(text)
                 }
@@ -108,16 +99,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun next(view:View) {
-        day = day_format.format((day_format.parse(day).time + Duration.ofDays(1).toMillis()))
-        tv_day.text = day
+        applicationDay = day_format.format((day_format.parse(applicationDay).time + Duration.ofDays(1).toMillis()))
+        tv_day.text = applicationDay
         handleEditText()
-        if(isCurrentDay(day)){
+        if(isCurrentDay(applicationDay)){
             btn_next.isEnabled = false
         }
     }
 
     private fun handleEditText() {
-        val f = File(FILE_PATH,day)
+        val f = File(FILE_PATH,applicationDay)
         if (f.exists()) {
             et_entries.setText(loadText(f))
         } else {
@@ -137,8 +128,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun previous(view:View) {
-        day = day_format.format((day_format.parse(day).time - Duration.ofDays(1).toMillis()))
-        tv_day.text = day
+        applicationDay = day_format.format((day_format.parse(applicationDay).time - Duration.ofDays(1).toMillis()))
+        tv_day.text = applicationDay
         handleEditText()
         btn_next.isEnabled = true
     }
@@ -178,7 +169,7 @@ class MainActivity : AppCompatActivity() {
                     val result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                     if(result[0] !== "") {
-                        appendEntry(time, result[0]);
+                        appendLine(entry_format.format(time) +" " + result[0]);
                     }
                 }
             }
